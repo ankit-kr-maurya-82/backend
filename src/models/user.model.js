@@ -19,7 +19,7 @@ const userSchema = new Schema(
             lowercase: true,
             trim: true
         },
-        fullname: {
+        fullName: {
             type: String,
             required: true,
             trim: true,
@@ -63,27 +63,28 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 }
 
 userSchema.methods.generateAccessToken = function(){
-    jwt.sign(
+    return jwt.sign(
         {
             _id: this.id,
             email: this.email,
             username: this.username,
-            fullname: this.fullname
+            fullName: this.fullName // Note: fullName, not fullname
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "1d"
         }
     )
 }
+
 userSchema.methods.generateRefreshToken = function(){
-    jwt.sign(
+    return jwt.sign(
         {
             _id: this.id,
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d"
         }
     )
 }
